@@ -1,0 +1,7 @@
+config.json
+moves.jsonl
+last_run.txt
+.ohmyagent/
+__pycache__/
+*.pyc
+.venv/

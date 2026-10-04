@@ -1,0 +1,6 @@
+{
+  "enabled": true,
+  "check_seconds": 90,
+  "min_age_seconds": 120,
+  "downloads": ""
+}
