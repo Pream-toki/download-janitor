@@ -1,30 +1,23 @@
 # Download janitor
 
-Downloads turns into a junk drawer. This sits in the Windows tray and files things away:
+Sorts finished files in Downloads into month + type folders, e.g. `Downloads\2026-10\pdf`.
 
-`Downloads/2026-10/pdf`, `.../images`, `.../zips`, `.../video`, `.../audio`, `.../docs`, `.../other`
+It **moves** files. It does not delete them.
 
-It waits until a file looks finished (not `.crdownload`, not touched in the last couple minutes) so Chrome can finish saving first.
+## Setup (once)
 
-## Undo / “what did it do?”
+1. Python 3 on PATH.
+2. `copy config.example.json config.json` (or just run `START.bat`; it will create config).
+3. Leave `"downloads": ""` to use your normal Downloads folder. Only change that if you really mean another folder.
+4. Double-click `START.bat`. Blue folder icon in the tray.
 
-Every move is logged.
+## Use, carefully
 
-- Tray → **What it did (last run)** — a text file: old path → new path
-- Tray → **Undo last run** — moves those files back, but only if they’re still where the janitor put them
-- Full history: `moves.jsonl` next to the script (not uploaded)
+- Leave it **ON** and it waits ~2 minutes after a download finishes, then files it.
+- **Run once now** skips the wait — don’t click that while a big file is still saving.
+- **What it did (last run)** — read this before you panic. Old path → new path.
+- **Undo last run** — puts that batch back, but only if the files are still where the janitor put them. If you already moved them by hand, undo can’t guess.
+- Full history: `moves.jsonl` (local, not on GitHub).
+- **Start with Windows** is optional. Uncheck it if you don’t want night sorting.
 
-Nothing is deleted. Worst case you undo.
-
-## Run
-
-```
-copy config.example.json config.json
-START.bat
-```
-
-`downloads` in config can stay empty (uses your user Downloads folder).
-
-Tray: ON/OFF, **Start with Windows**, run once, last run, undo, quit.
-
-Python 3 + `pip install -r requirements.txt`.
+If the first run sorted more than you wanted: **Undo last run** once, then turn **Janitor OFF** until you’re ready.
