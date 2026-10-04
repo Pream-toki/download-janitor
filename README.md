@@ -25,6 +25,6 @@ START.bat
 
 `downloads` in config can stay empty (uses your user Downloads folder).
 
-Tray: ON/OFF, run once, last run, undo, quit.
+Tray: ON/OFF, **Start with Windows**, run once, last run, undo, quit.
 
 Python 3 + `pip install -r requirements.txt`.

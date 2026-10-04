@@ -57,6 +57,50 @@ def save_config(data: dict) -> None:
     CONFIG_PATH.write_text(json.dumps(data, indent=2), encoding="utf-8")
 
 
+STARTUP_NAME = "DownloadJanitor.vbs"
+
+
+def startup_path() -> Path:
+    return (
+        Path(os.environ.get("APPDATA", ""))
+        / "Microsoft"
+        / "Windows"
+        / "Start Menu"
+        / "Programs"
+        / "Startup"
+        / STARTUP_NAME
+    )
+
+
+def startup_enabled() -> bool:
+    return startup_path().exists()
+
+
+def set_startup(icon, want: bool) -> None:
+    p = startup_path()
+    try:
+        if want:
+            script = Path(__file__).resolve()
+            p.parent.mkdir(parents=True, exist_ok=True)
+            p.write_text(
+                'Set sh = CreateObject("WScript.Shell")\n'
+                f'sh.CurrentDirectory = "{script.parent}"\n'
+                f'sh.Run "pythonw ""{script}""", 0, False\n',
+                encoding="ascii",
+            )
+        elif p.exists():
+            p.unlink()
+        cfg = load_config()
+        cfg["start_with_windows"] = want
+        save_config(cfg)
+    except OSError:
+        pass
+    try:
+        icon.update_menu()
+    except Exception:
+        pass
+
+
 def downloads_dir(cfg: dict) -> Path:
     raw = (cfg.get("downloads") or "").strip()
     if raw:
@@ -289,6 +333,11 @@ def menu(icon):
         pystray.Menu.SEPARATOR,
         pystray.MenuItem("Janitor ON", lambda i, _: set_enabled(i, True), checked=lambda _: en, radio=True),
         pystray.MenuItem("Janitor OFF", lambda i, _: set_enabled(i, False), checked=lambda _: not en, radio=True),
+        pystray.MenuItem(
+            "Start with Windows",
+            lambda i, _: set_startup(i, not startup_enabled()),
+            checked=lambda _: startup_enabled(),
+        ),
         pystray.Menu.SEPARATOR,
         pystray.MenuItem("Run once now", lambda i, _: sweep(force=True)),
         pystray.MenuItem("What it did (last run)", open_last),
